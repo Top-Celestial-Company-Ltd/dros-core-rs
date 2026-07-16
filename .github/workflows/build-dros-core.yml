@@ -1,0 +1,96 @@
+name: Build DROS Core Binaries (DLL & SO)
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch: # 支援手動下載/觸發
+
+jobs:
+  build-windows:
+    name: Build Windows x86_64 DLL
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          targets: x86_64-pc-windows-msvc
+
+      - name: Build Release DLL
+        run: |
+          cargo build --release --lib
+        # Note: Cargo will output target/release/dros_core_rs.dll
+
+      - name: Upload Windows DLL
+        uses: actions/upload-artifact@v4
+        with:
+          name: dros-core-windows-x64
+          path: target/release/dros_core_rs.dll
+
+  build-linux-x86_64:
+    name: Build Linux x86_64 SO
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          targets: x86_64-unknown-linux-gnu
+
+      - name: Build Release SO
+        run: |
+          cargo build --release --lib
+        # Note: Cargo will output target/release/libdros_core_rs.so
+
+      - name: Upload Linux x86_64 SO
+        uses: actions/upload-artifact@v4
+        with:
+          name: dros-core-linux-x64
+          path: target/release/libdros_core_rs.so
+
+  build-linux-arm64:
+    name: Build Linux ARM64 SO (Jetson / Raspberry Pi)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install cross-compilation toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+
+      - name: Set up Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          targets: aarch64-unknown-linux-gnu
+
+      - name: Configure Cargo for Cross Compilation
+        run: |
+          mkdir -p .cargo
+          echo '[target.aarch64-unknown-linux-gnu]' > .cargo/config.toml
+          echo 'linker = "aarch64-linux-gnu-gcc"' >> .cargo/config.toml
+        # This configures cargo to use the correct cross-linker
+
+      - name: Build Release ARM64 SO
+        run: |
+          cargo build --release --target aarch64-unknown-linux-gnu --lib
+
+      - name: Upload Linux ARM64 SO
+        uses: actions/upload-artifact@v4
+        with:
+          name: dros-core-linux-arm64
+          path: target/aarch64-unknown-linux-gnu/release/libdros_core_rs.so
