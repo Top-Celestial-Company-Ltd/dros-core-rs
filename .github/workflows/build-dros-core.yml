@@ -15,6 +15,9 @@ jobs:
   build-windows:
     name: Build Windows x86_64 DLL
     runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -28,7 +31,11 @@ jobs:
       - name: Build Release DLL
         run: |
           cargo build --release --lib
-        # Note: Cargo will output target/release/dros_core_rs.dll
+
+      - name: Debug Find Binaries
+        run: |
+          echo "=== Finding all compiled files ==="
+          find . -maxdepth 4 -name "*.dll" -o -name "*.so" -o -name "*.a" || true
 
       - name: Upload Windows DLL
         uses: actions/upload-artifact@v4
@@ -52,7 +59,11 @@ jobs:
       - name: Build Release SO
         run: |
           cargo build --release --lib
-        # Note: Cargo will output target/release/libdros_core_rs.so
+
+      - name: Debug Find Binaries
+        run: |
+          echo "=== Finding all compiled files ==="
+          find . -maxdepth 4 -name "*.dll" -o -name "*.so" -o -name "*.a" || true
 
       - name: Upload Linux x86_64 SO
         uses: actions/upload-artifact@v4
@@ -83,11 +94,15 @@ jobs:
           mkdir -p .cargo
           echo '[target.aarch64-unknown-linux-gnu]' > .cargo/config.toml
           echo 'linker = "aarch64-linux-gnu-gcc"' >> .cargo/config.toml
-        # This configures cargo to use the correct cross-linker
 
       - name: Build Release ARM64 SO
         run: |
           cargo build --release --target aarch64-unknown-linux-gnu --lib
+
+      - name: Debug Find Binaries
+        run: |
+          echo "=== Finding all compiled files ==="
+          find . -maxdepth 4 -name "*.dll" -o -name "*.so" -o -name "*.a" || true
 
       - name: Upload Linux ARM64 SO
         uses: actions/upload-artifact@v4
