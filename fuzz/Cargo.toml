@@ -1,0 +1,20 @@
+[package]
+name = "dros-core-rs-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+
+[dependencies.dros-core-rs]
+path = ".."
+
+[[bin]]
+name = "ffi_decide"
+path = "fuzz_targets/ffi_decide.rs"
+test = false
+doc = false

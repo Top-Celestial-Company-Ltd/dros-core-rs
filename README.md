@@ -15,7 +15,7 @@
 
 > *High-performance, memory-safe Dharma Reasoning Micro-Kernel.*
 
-This repository contains the authoritative **Rust** implementation of the **[Dharma Reasoning Operating System (DROS)](https://dr-os.io)** Micro-Kernel. 
+This repository contains the authoritative **Rust** implementation of the **[Deterministic Runtime Operating System (DROS)](https://dr-os.io)** Micro-Kernel. 
 
 As the original creators of the DROS Architecture, this codebase serves as the absolute standard for deterministic, hallucination-free reasoning engines designed for Large Language Models (LLMs).
 

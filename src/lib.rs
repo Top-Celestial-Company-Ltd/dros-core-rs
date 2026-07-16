@@ -2,11 +2,35 @@ pub mod types;
 pub mod weaver;
 pub mod navigator;
 pub mod guard;
+// DROS V2 (Project Aegis) — AVX-512 SIMD Engine & DCT Decision Engine
+pub mod simd_engine;
+pub mod dct;
+// DROS V2 Phase 3 — Syscall Hardener, Seccomp-BPF Armor, Spectre v1 Defense
+pub mod syscall_hardener;
+// DROS V2 Phase 4 — Lock-free MPSC Audit Ring Buffer (Red Team / Debugging Phase)
+pub mod audit_ring;
+// DROS V2 Phase 5 — C-ABI FFI Bridge & Integration Architecture
+pub mod ffi;
 
 pub use types::*;
 pub use weaver::DrosWeaver;
 pub use navigator::DrosNavigator;
 pub use guard::DrosGuardVM;
+// V2 Phase 2 re-exports
+pub use simd_engine::{AlignedBuf, PrefixRule, SimdPrefixEngine, MatchResult};
+pub use dct::{ClaimsTable, DctEngine, DctDecision};
+// V2 Phase 3 re-exports
+pub use syscall_hardener::{
+    Timespec, SockFilter, SockFprog,
+    DROS_SECCOMP_FILTER,
+    vajra_init_seccomp,
+    raw_clock_gettime_monotonic,
+    spectre_v1_safe_index,
+    spectre_safe_array_access,
+    speculation_barrier,
+};
+// V2 Phase 4 re-exports
+pub use audit_ring::{AuditRecord, AuditRingBuffer, RING_CAPACITY};
 
 /**
  * 📿 DROS Unified Integration Engine - Rust Crate Entry
